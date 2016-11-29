@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 
 import StartupScreen from '../components/StartupScreen';
 import HomeScreen from '../components/HomeScreen';
+import GalleryScreen from '../components/GalleryScreen';
 
 class AppRoot extends Component {
   constructor(props) {
@@ -20,6 +21,8 @@ class AppRoot extends Component {
             return <StartupScreen />;
         case 'home':
             return <HomeScreen />;
+        case 'gallery':
+            return <GalleryScreen />;
         default:
             return <StartupScreen />;
     }

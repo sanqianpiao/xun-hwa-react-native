@@ -6,10 +6,11 @@ import {
     ListView,
     Text,
     View,
-    TouchableHighlight,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { favourite, play } from '../../actions/playlistActions';
+import { goGallery } from '../../actions/screenActions';
 import Heart from './Heart';
 
 class Playlist extends Component {
@@ -27,7 +28,7 @@ class Playlist extends Component {
         if(!this.ds) {
             this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         }
-        let dataSource = this.ds.cloneWithRows(playlist.list);
+        let dataSource = this.ds.cloneWithRows(playlist.stories);
         if(!this.state) {
             this.state = {
                 dataSource: dataSource
@@ -44,22 +45,26 @@ class Playlist extends Component {
         const {playlist} = this.props;
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            dataSource: ds.cloneWithRows(playlist.list),
+            dataSource: ds.cloneWithRows(playlist.stories),
         };
     }
-    _handleItemPress(item) {
-        this.props.dispatch(play(item));
+    _handleItemPress(story) {
+        this.props.dispatch(play(story));
     }
-    _renderRow(item) {
+    _handleItemLongPress(story) {
+        this.props.dispatch(goGallery(story));
+    }
+    _renderRow(story) {
+        const titleStyle = story.status.played ? styles.playedTitle : styles.unplayedTitle;
         return (
             <View style={styles.row}>
                 <View style={styles.cola}>
-                    <Heart favourite={item.status.favourite} id={item.id} handlePress={this._handleHeartPress.bind(this)}/>
+                    <Heart favourite={story.status.favourite} id={story.id} handlePress={this._handleHeartPress.bind(this)}/>
                 </View>
                 <View style={styles.colb}>
-                    <TouchableHighlight onPress={()=>this._handleItemPress(item)} underlayColor="#dddddd">
-                        <Text>{item.title}</Text>
-                    </TouchableHighlight>
+                    <TouchableWithoutFeedback onPress={()=>this._handleItemPress(story)} onLongPress={()=>this._handleItemLongPress(story)}>
+                        <Text style={titleStyle}>{story.title}</Text>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         )
@@ -93,6 +98,12 @@ var styles = StyleSheet.create({
     colb: {
         flex: .8,
         justifyContent: 'center',
+    },
+    playedTitle: {
+        color: '#402a1d'
+    },
+    unplayedTitle: {
+        color: '#8c6e49'
     }
 
 });

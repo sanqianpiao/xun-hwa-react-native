@@ -40,11 +40,9 @@ class PlayBar extends Component {
         const {url, title} = this.props.playing;
         const fileName = title + '.mp3';
         RNFS.exists(`${dest}/${fileName}`).then((exists)=>{
-            // console.log(`${dest}/${fileName}  ${exists}`);
             if(!exists) {
                 FileDownload.download(url, dest, fileName, headers)
                 .then((response) => {
-                    // console.log(`downloaded! file saved to: ${response}`)
                     d.resolve({fileName: fileName, dest: dest});
                 })
                 .catch((error) => {
@@ -83,7 +81,11 @@ class PlayBar extends Component {
     _togglePlay() {
         if(!this.state.isPlaying) {
             const {id} = this.props.playing;
-            this.state.sound.play();
+            this.state.sound.play((success)=>{
+                if(success) {
+                    this.props.handlePlayed(id);
+                }
+            });
             this.state.interval = setInterval(() => this.state.sound.getCurrentTime((currentTime, isPlaying) => {
                     let duration = this.state.sound.getDuration();
                     this.setState({

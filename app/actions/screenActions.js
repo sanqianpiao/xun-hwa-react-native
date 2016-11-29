@@ -13,3 +13,11 @@ export function home() {
         screenName: 'home'
     }
 }
+
+export function goGallery(story) {
+    return {
+        type: types.CHANGE_SCREEN,
+        screenName: 'gallery',
+        story: story
+    }
+}
